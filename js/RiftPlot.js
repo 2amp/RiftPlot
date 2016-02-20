@@ -28,8 +28,10 @@ function init()
 {
 	/* renderer */
 	//canvas is auto initialized to renderer.domElement
-	renderer = new THREE.WebGLRenderer({antialias: true});
-	document.body.appendChild(renderer.domElement); //add default canvas to page
+	renderer = new THREE.WebGLRenderer({
+		canvas: document.getElementById('canvas'),
+		antialias: true
+	});
 
 	/* scene */
 	scene = new THREE.Scene();
