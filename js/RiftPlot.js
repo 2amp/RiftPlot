@@ -50,6 +50,7 @@ function init()
 
 
   	//attach event callbacks
+  	window.addEventListener("keydown", onKey);
   	window.addEventListener('resize', onWindowResize);
   	document.addEventListener('fullscreenchange', onFullscreenChange);
 	document.addEventListener('mozfullscreenchange', onFullscreenChange);
@@ -106,6 +107,19 @@ document.querySelector('#vr-toggle').addEventListener('click', function()
  	requestFullscreen();
  	onWindowResize();
 });
+
+/**
+ * Callback for key pressed.
+ * Following is a list of key events:
+ * 	z - reset VR camera
+ */
+function onKey(event)
+{
+	event.preventDefault();
+	
+	if (event.keyCode == 90) //z
+		vrControls.zeroSensor();
+};
 
 /**
  * Set effect to full screen on desktop.
