@@ -29,8 +29,6 @@ function init()
 	/* renderer */
 	//canvas is auto initialized to renderer.domElement
 	renderer = new THREE.WebGLRenderer({antialias: true});
-	//renderer.autoClear = false;
- 	//renderer.setClearColor(0xFFFFFF);
 	document.body.appendChild(renderer.domElement); //add default canvas to page
 
 	/* scene */
