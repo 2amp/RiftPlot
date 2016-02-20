@@ -79,14 +79,12 @@ function initCube()
  */
 function animate(delta)
 {
-	cube.rotation.y += 0.01;
+	//cube.rotation.y += 0.01;
 
-	if (vrMode) {
+	if (vrMode)
     	vrEffect.render(scene, camera);
-    }
-    else {
+    else
     	renderer.render(scene, camera);
-    }
     vrControls.update();
 
   	requestAnimationFrame(animate);
