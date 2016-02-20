@@ -78,7 +78,6 @@ function initCube()
  */
 function animate(delta)
 {
-	console.log("animate");
 	cube.rotation.y += 0.01;
 
 	if (vrMode) {
@@ -116,7 +115,6 @@ document.querySelector('#vr-toggle').addEventListener('click', function()
  */
 function requestFullscreen()
 {
-	console.log("requestFullscreen");
 	var el = renderer.domElement;
 
 	if (!isMobile())
@@ -134,6 +132,21 @@ function requestFullscreen()
     	el.webkitRequestFullscreen();
 }
 
+/**
+ * Callback for full screen change.
+ * 
+ * @source Sechelt
+ */
+function onFullscreenChange(e)
+{
+	var fsElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
+
+  	if (!fsElement)
+    	vrMode = false;
+	// else
+ //    	window.screen.orientation.lock('landscape'); // lock screen if mobile
+}
+
 
 /**
  * Callback for window resize.
@@ -144,7 +157,6 @@ function requestFullscreen()
  */
 function onWindowResize()
 {
-	console.log("onWindowResize");
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
   
@@ -152,22 +164,6 @@ function onWindowResize()
     	vrEffect.setSize(window.innerWidth, window.innerHeight);
     else
     	renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-/**
- * Callback for full screen change.
- * 
- * @source Sechelt
- */
-function onFullscreenChange(e)
-{
-	console.log("onFullscreenChange");
-	var fsElement = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
-
-  	if (!fsElement)
-    	vrMode = false;
-	// else
- //    	window.screen.orientation.lock('landscape'); // lock screen if mobile
 }
 
 
