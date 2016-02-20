@@ -8,8 +8,10 @@
 
 
 /* ----- VARS ----- */
+var canvas = null;
+
 //Three.js
-var camera, scene, renderer;
+var camera, scene, renderer, orbit;
 
 //VR
 var vrEffect, vrControls;
@@ -31,18 +33,12 @@ var view = null;
  */
 function init()
 {
-	/* renderer */
-	//canvas is auto initialized to renderer.domElement
-	renderer = new THREE.WebGLRenderer({
-		canvas: document.getElementById('canvas'),
-		antialias: true
-	});
+	canvas = document.getElementById('canvas');
 
-	/* scene */
 	scene = new THREE.Scene();
-
-	/* camera */
+	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+	orbit = new THREE.OrbitControls(camera, renderer.domElement);
 
   	/* objects */
   	// initCube();
@@ -88,8 +84,7 @@ function initMathbox()
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
 
-	camera.position.set(0, 0, 3);
-	mathbox.select('camera').set('proxy', true);
+	camera.position.set(0, 0, 2);
 
 	view = mathbox
     .set({
@@ -131,8 +126,10 @@ function animate(delta)
 	//cube.rotation.y += 0.01;
 	requestAnimationFrame(animate);
 
-	vrControls.update();
 	context.frame();
+
+	orbit.update();
+	vrControls.update();
 
 	if (vrMode)
     	vrEffect.render(scene, camera);
