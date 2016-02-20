@@ -7,13 +7,18 @@
  */
 
 
-/* --- VARS --- */
+/* ----- VARS ----- */
+//Three.js
 var camera, scene, renderer;
-var vrEffect, vrControls;
 
+//VR
+var vrEffect, vrControls;
 var vrMode = false;
 
-var cube = null;
+//Mathbox
+var context = null;
+var mathbox = null;
+var view = null;
 
 
 /* ----- SETUP ----- */
@@ -37,10 +42,11 @@ function init()
 	scene = new THREE.Scene();
 
 	/* camera */
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
+	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 
   	/* objects */
-  	initCube();
+  	// initCube();
+  	initMathbox();
 
 
   	/* VR */
@@ -59,16 +65,59 @@ function init()
 	requestAnimationFrame(animate);
 }
 
-/**
- * Create a ball
- */
 function initCube()
 {
 	var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
 	var material = new THREE.MeshNormalMaterial();
-	cube = new THREE.Mesh( geometry, material );
-	cube.position.z = -0.3;
-	scene.add( cube );
+	var cube = new THREE.Mesh( geometry, material );
+	scene.add(cube);
+
+	camera.position.z = 0.3;
+}
+
+/**
+ * 
+ */
+function initMathbox()
+{
+	context = new MathBox.Context(renderer, scene, camera);
+	context.init();
+
+	mathbox = context.api;
+
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
+
+	camera.position.set(0, 0, 3);
+	mathbox.select('camera').set('proxy', true);
+
+	view = mathbox
+    .set({
+      focus: 3,
+    })
+    .cartesian({
+      range: [[-2, 2], [-1, 1], [-1, 1]],
+      scale: [2, 1, 1],
+    });
+
+    view.axis({
+      detail: 30,
+    });
+
+    view.axis({
+    	axis: 1,
+    	color: 'red',
+    	})
+    .axis({
+    	axis: 2,
+    	color: 'green',
+    	})
+    .axis({
+    	axis: 3,
+    	color: 'blue',
+    	});
+
+    mathbox.print();
 }
 
 
@@ -80,14 +129,15 @@ function initCube()
 function animate(delta)
 {
 	//cube.rotation.y += 0.01;
+	requestAnimationFrame(animate);
+
+	vrControls.update();
+	context.frame();
 
 	if (vrMode)
     	vrEffect.render(scene, camera);
     else
     	renderer.render(scene, camera);
-    vrControls.update();
-
-  	requestAnimationFrame(animate);
 }
 
 

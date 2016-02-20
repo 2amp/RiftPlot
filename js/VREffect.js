@@ -127,7 +127,9 @@ THREE.VREffect = function ( renderer, onError ) {
 
 			}
 
-			var size = renderer.getSize();
+			// var size = renderer.getSize();
+			var canvas = renderer.domElement;
+			var size = {width: canvas.offsetWidth, height: canvas.offsetHeight};
 			size.width /= 2;
 
 			renderer.enableScissorTest( true );
