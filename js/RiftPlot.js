@@ -52,11 +52,11 @@ function init()
 	/* three.js */
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+	camera = new THREE.PerspectiveCamera(60, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
 	orbit = new THREE.OrbitControls(camera, document, renderer.domElement);
 
 	renderer.setClearColor(0xffffff);
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
 
 	// camera.up.set(0, 0, 1);
 	camera.position.set(2, 3, 3);
@@ -66,7 +66,7 @@ function init()
 	/* MathBox */
 	context = new MathBox.Context(renderer, scene, camera).init();
 	mathbox = context.api;
-	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
+	context.resize({viewWidth: canvas.offsetWidth, viewHeight: canvas.offsetHeight});
 
   // Wrapper
   w = new Wrapper(mathbox);
@@ -75,7 +75,7 @@ function init()
   	/* VR */
   	vrControls = new THREE.VRControls(camera);
   	vrEffect = new THREE.VREffect(renderer);
-  	vrEffect.setSize(window.innerWidth, window.innerHeight);
+  	vrEffect.setSize(canvas.offsetWidth, canvas.offsetHeight);
 
 
   	//attach event callbacks
@@ -219,13 +219,13 @@ function onFullscreenChange(e)
  */
 function onWindowResize()
 {
-	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.aspect = canvas.offsetWidth / canvas.offsetHeight;
 	camera.updateProjectionMatrix();
 
   	if (vrMode)
-    	vrEffect.setSize(window.innerWidth, window.innerHeight);
+    	vrEffect.setSize(canvas.offsetWidth, canvas.offsetHeight);
     else
-    	renderer.setSize(window.innerWidth, window.innerHeight);
+    	renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
 }
 
 /**
