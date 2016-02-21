@@ -48,8 +48,8 @@ html, body {
     line-height: 30px;
 
     color: white;
-    background-color: clear;
     border: 1px solid white;
+    background-color: transparent;
 }
 
 #run-button:hover {
@@ -57,5 +57,5 @@ html, body {
 
     color: black;
     background-color: white;
-    border: 1px solid clear;
+    border: 1px solid transparent;
 }
