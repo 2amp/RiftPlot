@@ -8,6 +8,7 @@
 
 
 /* ----- VARS ----- */
+//DOM
 var canvas = null;
 var editor = null;
 
@@ -22,6 +23,8 @@ var vrMode = false;
 var context = null;
 var mathbox = null;
 var view = null;
+
+var stats;
 
 var runTimer = null;
 
@@ -40,18 +43,25 @@ function init()
 	canvas = document.getElementById('canvas');
 	editor = document.getElementById('editor');
 
+	/* stats.js */
+	stats = new Stats();
+	stats.setMode(0);
+	stats.domElement.id = "stats";
+	document.body.appendChild(stats.domElement);
+
 	/* three.js */
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-	orbit = new THREE.OrbitControls(camera, renderer.domElement);
+	orbit = new THREE.OrbitControls(camera, document, renderer.domElement);
 
 	renderer.setClearColor(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	// camera.position.set(0, 0, 1);
-	camera.position.set(2, 2, 2);
-	// camera.lookAt(THREE.Vector3(0, 0, 0));
+	// camera.up.set(0, 0, 1);
+	camera.position.set(2, 3, 3);
+	camera.lookAt( new THREE.Vector3() );
+
 
 	/* MathBox */
 	context = new MathBox.Context(renderer, scene, camera).init();
@@ -83,9 +93,7 @@ function init()
 function clearScene()
 {
 	for(var i = scene.children.length - 1; i >= 0; i--)
-	{
     	scene.remove(scene.children[i]);
-    }
 
 	initContext();
 }
@@ -98,7 +106,7 @@ function clearScene()
  */
 function animate(delta)
 {
-	requestAnimationFrame(animate);
+	stats.begin();
 
 	orbit.update();
 	vrControls.update();
@@ -110,6 +118,10 @@ function animate(delta)
     	vrEffect.render(scene, camera);
     else
     	renderer.render(scene, camera);
+
+    stats.end();
+
+    requestAnimationFrame(animate);
 }
 
 
@@ -229,7 +241,6 @@ function run()
   w._removeOldManipulatePlot3D();
 
 	mathbox.select('cartesian').set('rotation', [-Math.PI/2, 0, Math.PI/2]);
-	mathbox.print();
 }
 
 
