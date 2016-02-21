@@ -1,4 +1,11 @@
 /**
+ * Wrapper for RiftPlot live editor.
+ * Takes simpler syntax and produces a MathBox code.
+ *
+ * @author: chrisf1337 (Chris Fu)
+ */
+
+/**
  * Plotting wrapper around mathbox. Assumes that the scene is empty and the camera is positioned
  * properly.
  */
