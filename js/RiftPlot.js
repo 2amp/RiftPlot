@@ -59,7 +59,7 @@ function init()
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	// camera.up.set(0, 0, 1);
-	camera.position.set(2, 2, 2);
+	camera.position.set(2, 3, 3);
 
 
 	/* MathBox */
