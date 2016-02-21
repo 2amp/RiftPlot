@@ -237,7 +237,6 @@ function run()
 	interpret();
 
 	mathbox.select('cartesian').set('rotation', [-Math.PI/2, 0, Math.PI/2]);
-	mathbox.print();
 }
 
 
