@@ -48,9 +48,9 @@ function init()
   	context = new MathBox.Context(renderer, scene, camera).init();
 	mathbox = context.api;
 
+	renderer.setClearColor(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
-  	// initMathbox();
 
 
   	/* VR */
@@ -68,40 +68,6 @@ function init()
 	requestAnimationFrame(animate);
 }
 
-/**
- * 
- */
-function initMathbox()
-{
-	camera.position.set(0, 0, 2);
-
-	view = mathbox
-    .set({
-      focus: 3,
-    })
-    .cartesian({
-      range: [[-2, 2], [-1, 1], [-1, 1]],
-      scale: [2, 1, 1],
-    });
-
-    view.axis({
-      detail: 30,
-    });
-
-    view.axis({
-    	axis: 1,
-    	color: 'red',
-    	})
-    .axis({
-    	axis: 2,
-    	color: 'green',
-    	})
-    .axis({
-    	axis: 3,
-    	color: 'blue',
-    	});
-}
-
 
 /* ----- RENDERING ----- */
 /**
@@ -110,12 +76,11 @@ function initMathbox()
  */
 function animate(delta)
 {
-	//cube.rotation.y += 0.01;
+	console.log("animate");
 	requestAnimationFrame(animate);
 
-	context.frame();
-
 	orbit.update();
+	context.frame();
 	vrControls.update();
 
 	if (vrMode)
@@ -162,7 +127,7 @@ $(window).keypress(function(event)
  */
 $("#run-button").click(function(event)
 {
-	onRun();
+	run();
 });
 
 /**
@@ -227,10 +192,9 @@ function onWindowResize()
 /**
  *
  */
-function onRun()
+function run()
 {
-	var interpret = new Function('"use strict";\n' + editor.value);
-
+	var interpret = new Function(editor.value);
 	interpret();
 }
 
