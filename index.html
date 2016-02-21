@@ -14,13 +14,12 @@
 
     <img id="vr-toggle" class="svg img-button" src="asset/cardboard.svg" alt="Google Cardboard Icon" draggable="false">
 
-    <canvas id="canvas" class="canvas"></canvas>
+    <canvas id="view" class="canvas"></canvas>
 
     <div class="container">
-      <textarea id="editor" rows="25" cols="40"></textarea>
+      <textarea id="e" rows="25" cols="40"></textarea>
       <a id="run-button">Run</a>
     </div>
-
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -31,10 +30,14 @@
     <!-- <script src="js/mathbox/mathbox-bundle.js"></script>-->
     <script src="js/mathbox/mathbox-core.js"></script>
     <script src="js/webvr-polyfill.js"></script>
+    <script src="js/TrackballControls.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/VRControls.js"></script>
     <script src="js/VREffect.js"></script>
+      
+    <script src="js/canvas-text-editor.js"></script>
+    
+    <script src="js/wrapper.js"></script>
     <script src="js/RiftPlot.js"></script>
-    <script type="text/javascript" src="js/wrapper.js"></script>
   </body>
 </html>

@@ -9,7 +9,7 @@ html, body {
     width: 100vw;
     height: 100vh;
 
-    overflow: hidden;
+/*    overflow: hidden;*/
 }
 
 .title {
@@ -89,4 +89,20 @@ html, body {
     color: black;
     background-color: white;
     border: 1px solid transparent;
+}
+
+
+
+.canvas-text-editor {
+    display: block;
+    
+    left: 0px;
+    bottom: 0px;
+    position: fixed;
+}
+
+.canvas-text-editor canvas {
+    display: block;
+    
+    color: #b1d6ff;
 }

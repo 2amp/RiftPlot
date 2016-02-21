@@ -10,10 +10,19 @@
 /* ----- VARS ----- */
 //DOM
 var canvas = null;
+var e = null;
+
+//editor
+var doc = null;
 var editor = null;
+var texture = null;
+var editorView = null;
+var runTimer = null;
 
 //Three.js
-var camera, scene, renderer, orbit;
+var renderer, orbit;
+var camera1, scene1;
+var camera2, scene2;
 
 //VR
 var vrEffect, vrControls;
@@ -24,78 +33,108 @@ var context = null;
 var mathbox = null;
 var view = null;
 
-var stats;
+//Other
+var stats = null;
+var wrapper = null;
 
-var runTimer = null;
 
 
 /* ----- SETUP ----- */
 /**
  * Master init function.
- * Initialize Three.js by setting up the renderer, camera, and scene.
- * Take default canvas created by renderer and add to page.
- *
- * Create VR helper libraries.
  */
 function init()
 {
 	/* DOM */
-	canvas = document.getElementById('canvas');
-	editor = document.getElementById('editor');
+	canvas = document.getElementById('view');
+	e = document.getElementById('e');
 
-	/* stats.js */
+	initThreejs();
+	initMathbox();
+	initEditor();
+
+  	wrapper = new Wrapper(mathbox);
+
+  	/* stats.js */
 	stats = new Stats();
 	stats.setMode(0);
 	stats.domElement.id = "stats";
 	document.body.appendChild(stats.domElement);
-
-	/* three.js */
-	scene = new THREE.Scene();
-	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-	camera = new THREE.PerspectiveCamera(60, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
-	orbit = new THREE.OrbitControls(camera, document, renderer.domElement);
-
-	renderer.setClearColor(0xffffff);
-	renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-
-	// camera.up.set(0, 0, 1);
-	camera.position.set(2, 3, 3);
-	camera.lookAt( new THREE.Vector3() );
-
-
-	/* MathBox */
-	context = new MathBox.Context(renderer, scene, camera).init();
-	mathbox = context.api;
-	context.resize({viewWidth: canvas.offsetWidth, viewHeight: canvas.offsetHeight});
-
-  // Wrapper
-  w = new Wrapper(mathbox);
-
-
-  	/* VR */
-  	vrControls = new THREE.VRControls(camera);
-  	vrEffect = new THREE.VREffect(renderer);
-  	vrEffect.setSize(canvas.offsetWidth, canvas.offsetHeight);
-
 
   	//attach event callbacks
   	window.addEventListener('resize', onWindowResize);
   	document.addEventListener('fullscreenchange', onFullscreenChange);
 	document.addEventListener('mozfullscreenchange', onFullscreenChange);
 
-	//onWindowResize();
+
 	requestAnimationFrame(animate);
+	editor.focus();
 }
 
 /**
- * Completely clear the Three.js scene and re-initialize MathBox context
+ * Initialize Three.js
  */
-function clearScene()
+function initThreejs()
 {
-	for(var i = scene.children.length - 1; i >= 0; i--)
-    	scene.remove(scene.children[i]);
+	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+	renderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+	renderer.setClearColor(0xffffff);
 
-	initContext();
+	//Main 
+	scene1 = new THREE.Scene();
+	camera1 = new THREE.PerspectiveCamera(60, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
+	camera1.position.set(3, 0, 0);
+	camera1.up.set(0, 0, 1);
+
+	orbit = new THREE.OrbitControls(camera1, document, renderer.domElement);
+	// orbit = new THREE.TrackballControls(camera);
+	// orbit.rotateSpeed = 2.0;
+	// orbit.zoomSpeed = 1.2;
+	// orbit.panSpeed = 0.8;
+	// orbit.noZoom = false;
+	// orbit.noPan = true;
+	// orbit.staticMoving = true;
+	// orbit.dynamicDampingFactor = 0.3;
+	// orbit.keys = [ 65, 83, 68 ];
+
+
+	//Editor view
+	scene2 = new THREE.Scene();
+	camera2 = new THREE.OrthographicCamera();
+}
+
+/**
+ * Initialize MathBox context using already created main Three.js scene and camera.
+ */
+function initMathbox()
+{
+	context = new MathBox.Context(renderer, scene, camera).init();
+	mathbox = context.api;
+	context.resize({viewWidth: canvas.offsetWidth, viewHeight: canvas.offsetHeight});
+}
+
+/**
+ *
+ */
+function initEditor()
+{
+	var CanvasTextEditor = require('CanvasTextEditor');
+    var Document = require('Document');
+	doc = new Document('asdfasdfs');
+	editor = new CanvasTextEditor(doc);
+
+    document.body.appendChild(editor.getEl());
+    editor.resize(256, 256);
+}
+
+/**
+ *
+ */
+function initVR()
+{
+	vrControls = new THREE.VRControls(camera);
+  	vrEffect = new THREE.VREffect(renderer);
+  	vrEffect.setSize(canvas.offsetWidth, canvas.offsetHeight);
 }
 
 
@@ -110,6 +149,12 @@ function animate(delta)
 
 	orbit.update();
 	vrControls.update();
+
+	texture.needsUpdate = true;
+
+	editorView.position.set(0, 2, -2);
+	editorView.lookAt( camera.getWorldDirection().multiplyScalar(-1) );
+	editorView.up.copy( camera.up );
 
 	if (context !== null)
 		context.frame();
@@ -235,12 +280,13 @@ function onWindowResize()
 function run()
 {
 	mathbox.remove("*");
-  w._resetManipulateSeen();
-	var interpret = new Function(editor.value);
-	interpret();
-  w._removeOldManipulatePlot3D();
+  	wrapper._resetManipulateSeen();
 
-	mathbox.select('cartesian').set('rotation', [-Math.PI/2, 0, Math.PI/2]);
+	var interpret = new Function(e.value);
+	interpret();
+  	wrapper._removeOldManipulatePlot3D();
+
+	//mathbox.select('cartesian').set('rotation', [-Math.PI/2, 0, Math.PI/2]);
 }
 
 
