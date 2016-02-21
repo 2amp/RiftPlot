@@ -127,6 +127,9 @@ Wrapper.prototype.manipulatePlot3D = function(expr, manipulateVar, start, end, s
         max: end.toString(),
         step: step.toString(),
       });
+      if (expr !== this.manipulates[id]['expr']) {
+        this._newManipulatePlot3D(expr, manipulateVar, id);
+      }
       this.manipulates[id] = {
         'expr': expr,
         'manipulateVar': manipulateVar,
