@@ -9,6 +9,7 @@
 
 /* ----- VARS ----- */
 var canvas = null;
+var editor = null;
 
 //Three.js
 var camera, scene, renderer, orbit;
@@ -33,16 +34,23 @@ var view = null;
  */
 function init()
 {
+	/* DOM */
 	canvas = document.getElementById('canvas');
+	editor = document.getElementById('editor');
 
+	/* three.js */
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 	orbit = new THREE.OrbitControls(camera, renderer.domElement);
 
-  	/* objects */
-  	// initCube();
-  	initMathbox();
+  	/* MathBox */
+  	context = new MathBox.Context(renderer, scene, camera).init();
+	mathbox = context.api;
+
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
+  	// initMathbox();
 
 
   	/* VR */
@@ -52,7 +60,6 @@ function init()
 
 
   	//attach event callbacks
-  	window.addEventListener("keydown", onKey);
   	window.addEventListener('resize', onWindowResize);
   	document.addEventListener('fullscreenchange', onFullscreenChange);
 	document.addEventListener('mozfullscreenchange', onFullscreenChange);
@@ -61,29 +68,11 @@ function init()
 	requestAnimationFrame(animate);
 }
 
-function initCube()
-{
-	var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
-	var material = new THREE.MeshNormalMaterial();
-	var cube = new THREE.Mesh( geometry, material );
-	scene.add(cube);
-
-	camera.position.z = 0.3;
-}
-
 /**
  * 
  */
 function initMathbox()
 {
-	context = new MathBox.Context(renderer, scene, camera);
-	context.init();
-
-	mathbox = context.api;
-
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
-
 	camera.position.set(0, 0, 2);
 
 	view = mathbox
@@ -111,8 +100,6 @@ function initMathbox()
     	axis: 3,
     	color: 'blue',
     	});
-
-    mathbox.print();
 }
 
 
@@ -146,7 +133,7 @@ function animate(delta)
  * 
  * @source Sechelt
  */
-document.querySelector('#vr-toggle').addEventListener('click', function()
+$('#vr-toggle').click(function()
 {
  	vrMode = vrMode ? false : true;
  	requestFullscreen();
@@ -154,17 +141,29 @@ document.querySelector('#vr-toggle').addEventListener('click', function()
 });
 
 /**
- * Callback for key pressed.
- * Following is a list of key events:
- * 	z - reset VR camera
+ * Called when user presses a key on the window
  */
-function onKey(event)
+$(window).keypress(function(event)
 {
-	event.preventDefault();
-	
-	if (event.keyCode == 90) //z
-		vrControls.zeroSensor();
-};
+	switch (event.which)
+	{
+		case 90: //z
+			vrControls.zeroSensor();
+			break;
+		case 13: //enter
+
+			break;
+	}
+
+});
+
+/**
+ * Called when user pressed "run" button
+ */
+$("#run-button").click(function(event)
+{
+	onRun();
+});
 
 /**
  * Set effect to full screen on desktop.
@@ -223,6 +222,16 @@ function onWindowResize()
     	vrEffect.setSize(window.innerWidth, window.innerHeight);
     else
     	renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+/**
+ *
+ */
+function onRun()
+{
+	var interpret = new Function('"use strict";\n' + editor.value);
+
+	interpret();
 }
 
 
