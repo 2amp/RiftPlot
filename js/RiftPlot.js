@@ -44,13 +44,8 @@ function init()
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 	orbit = new THREE.OrbitControls(camera, renderer.domElement);
 
-  	/* MathBox */
-  	context = new MathBox.Context(renderer, scene, camera).init();
-	mathbox = context.api;
-
 	renderer.setClearColor(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
-	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
 
 
   	/* VR */
@@ -68,6 +63,29 @@ function init()
 	requestAnimationFrame(animate);
 }
 
+/**
+ * Initialize MathBox context using scene, render, and camera
+ */
+function initContext()
+{
+	context = new MathBox.Context(renderer, scene, camera).init();
+	mathbox = context.api;
+	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
+}
+
+/**
+ * Completely clear the Three.js scene and re-initialize MathBox context
+ */
+function clearScene()
+{
+	for(var i = scene.children.length - 1; i >= 0; i--)
+	{
+    	scene.remove(scene.children[i]);
+    }
+
+	initContext();
+}
+
 
 /* ----- RENDERING ----- */
 /**
@@ -76,12 +94,13 @@ function init()
  */
 function animate(delta)
 {
-	console.log("animate");
 	requestAnimationFrame(animate);
 
 	orbit.update();
-	context.frame();
 	vrControls.update();
+
+	if (context !== null)
+		context.frame();
 
 	if (vrMode)
     	vrEffect.render(scene, camera);
@@ -108,18 +127,15 @@ $('#vr-toggle').click(function()
 /**
  * Called when user presses a key on the window
  */
-$(window).keypress(function(event)
+$(document).keypress(function(e)
 {
-	switch (event.which)
+	if (e.which == 90) //z
+		//vrControls.zeroSensor();
+
+	if (e.which == 13) //enter
 	{
-		case 90: //z
-			vrControls.zeroSensor();
-			break;
-		case 13: //enter
 
-			break;
 	}
-
 });
 
 /**
@@ -166,8 +182,8 @@ function onFullscreenChange(e)
 
   	if (!fsElement)
     	vrMode = false;
-	// else
- //    	window.screen.orientation.lock('landscape'); // lock screen if mobile
+//	else
+//    	window.screen.orientation.lock('landscape'); // lock screen if mobile
 }
 
 
@@ -194,6 +210,8 @@ function onWindowResize()
  */
 function run()
 {
+	clearScene();
+
 	var interpret = new Function(editor.value);
 	interpret();
 }
