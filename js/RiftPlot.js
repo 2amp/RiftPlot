@@ -53,13 +53,14 @@ function init()
 	scene = new THREE.Scene();
 	renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 	camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-	orbit = new THREE.OrbitControls(camera, renderer.domElement);
+	orbit = new THREE.OrbitControls(camera, document, renderer.domElement);
 
 	renderer.setClearColor(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	// camera.up.set(0, 0, 1);
 	camera.position.set(2, 3, 3);
+	camera.lookAt( new THREE.Vector3() );
 
 
 	/* MathBox */
