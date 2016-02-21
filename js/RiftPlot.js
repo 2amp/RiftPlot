@@ -49,7 +49,7 @@ function init()
 	renderer.setClearColor(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	// camera.up.set(0, 0, 1);
+	// camera.position.set(0, 0, 1);
 	camera.position.set(2, 2, 2);
 	// camera.lookAt(THREE.Vector3(0, 0, 0));
 
@@ -57,6 +57,9 @@ function init()
 	context = new MathBox.Context(renderer, scene, camera).init();
 	mathbox = context.api;
 	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
+
+  // Wrapper
+  w = new Wrapper(mathbox);
 
 
   	/* VR */
@@ -138,7 +141,7 @@ $("#editor").keydown(function(e){
  */
 $("#editor").keyup(function(e)
 {
-	clearTimeout(runTimer); 
+	clearTimeout(runTimer);
 
 	runTimer = setTimeout(function(){
 		run();
@@ -215,14 +218,15 @@ function onWindowResize()
 
 /**
  * Run & parse the MathBox.
- * First remove everything 
+ * First remove everything
  */
 function run()
 {
 	mathbox.remove("*");
-
+  w._resetManipulateSeen();
 	var interpret = new Function(editor.value);
 	interpret();
+  w._removeOldManipulatePlot3D();
 
 	mathbox.select('cartesian').set('rotation', [-Math.PI/2, 0, Math.PI/2]);
 	mathbox.print();

@@ -6,7 +6,7 @@
 html, body {
     width: 100vw;
     height: 100vh;
-    
+
     overflow: hidden;
 
     font-family: Arial;
@@ -16,15 +16,15 @@ html, body {
     width: 40px;
     height: auto;
     padding: 10px;
-    
+
     left: 0px;
     bottom: 0px;
     position: fixed;
     display: block;
-    
+
     color: black;
     background-color: black;
-    
+
     cursor: pointer;
 }
 
