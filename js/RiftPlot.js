@@ -23,6 +23,8 @@ var context = null;
 var mathbox = null;
 var view = null;
 
+var runTimer = null;
+
 
 /* ----- SETUP ----- */
 /**
@@ -47,6 +49,15 @@ function init()
 	renderer.setClearColor(0xffffff);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
+	// camera.up.set(0, 0, 1);
+	camera.position.set(2, 2, 2);
+	// camera.lookAt(THREE.Vector3(0, 0, 0));
+
+	/* MathBox */
+	context = new MathBox.Context(renderer, scene, camera).init();
+	mathbox = context.api;
+	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
+
 
   	/* VR */
   	vrControls = new THREE.VRControls(camera);
@@ -61,16 +72,6 @@ function init()
 
 	//onWindowResize();
 	requestAnimationFrame(animate);
-}
-
-/**
- * Initialize MathBox context using scene, render, and camera
- */
-function initContext()
-{
-	context = new MathBox.Context(renderer, scene, camera).init();
-	mathbox = context.api;
-	context.resize({viewWidth: window.innerWidth, viewHeight: window.innerHeight});
 }
 
 /**
@@ -125,23 +126,30 @@ $('#vr-toggle').click(function()
 });
 
 /**
- * Called when user presses a key on the window
+ * Called when user presses down on a key while in textarea.
+ * Stop the event propagation so that graph receive modifiers while editing.
  */
-$(document).keypress(function(e)
-{
-	if (e.which == 90) //z
-		//vrControls.zeroSensor();
-
-	if (e.which == 13) //enter
-	{
-
-	}
+$("#editor").keydown(function(e){
+	e.stopPropagation();
 });
+
+/**
+ * Called when user finishes typing a character into the textarea
+ */
+$("#editor").keyup(function(e)
+{
+	clearTimeout(runTimer); 
+
+	runTimer = setTimeout(function(){
+		run();
+	}, 1000);
+});
+
 
 /**
  * Called when user pressed "run" button
  */
-$("#run-button").click(function(event)
+$("#run-button").click(function(e)
 {
 	run();
 });
@@ -206,14 +214,18 @@ function onWindowResize()
 }
 
 /**
- *
+ * Run & parse the MathBox.
+ * First remove everything 
  */
 function run()
 {
-	clearScene();
+	mathbox.remove("*");
 
 	var interpret = new Function(editor.value);
 	interpret();
+
+	mathbox.select('cartesian').set('rotation', [-Math.PI/2, 0, Math.PI/2]);
+	mathbox.print();
 }
 
 
