@@ -12,6 +12,14 @@ html, body {
     font-family: Arial;
 }
 
+
+/* UI */
+#stats {
+    top: 5px;
+    right: 5px;
+    position: fixed;
+}
+
 .img-button {
     width: 40px;
     height: auto;
